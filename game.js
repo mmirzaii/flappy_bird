@@ -1,7 +1,7 @@
 var cvs = document.getElementById("mycanvas");
 var ctx = cvs.getContext("2d");
-var frames = 0;
 var DEGREE = Math.PI / 180;
+var frames = 0;
 var sprite = new Image();
 sprite.src = "img/sprite.png";
 var SCORE = new Audio();
@@ -10,10 +10,10 @@ var FLAP = new Audio();
 FLAP.src = "audio/flap.wav";
 var HIT = new Audio();
 HIT.src = "audio/hit.wav";
-var START = new Audio();
-START.src = "audio/start.wav";
 var DIE = new Audio();
 DIE.src = "audio/die.wav";
+var START = new Audio();
+START.src = "audio/start.wav";
 var state = { current: 0, getReady: 0, game: 1, over: 2 };
 function clickHandler() {
   switch (state.current) {
@@ -35,16 +35,15 @@ function clickHandler() {
   }
 }
 document.addEventListener("click", clickHandler);
-document.addEventListener("touchstart", clickHandler);
-document.addEventListener("keydown", (e) => {
-  if (e.code == "Space") {
+document.addEventListener("keydown", function (e) {
+  if (e.which == 32) {
     clickHandler();
   }
 });
 var bg = {
   sX: 0,
   sY: 0,
-  w: 245,
+  w: 275,
   h: 226,
   x: 0,
   y: cvs.height - 226,
@@ -183,9 +182,55 @@ var pipes = {
         this.position.shift();
         score.value += 1;
         SCORE.play();
-        score.best = Math.max(score.value, score.value);
+        score.best = Math.max(score.value, score.best);
         localStorage.setItem("best", score.best);
       }
+    }
+  },
+};
+var getReady = {
+  sX: 0,
+  sY: 228,
+  w: 173,
+  h: 152,
+  x: cvs.width / 2 - 173 / 2,
+  y: 80,
+  draw: function () {
+    if (state.current == state.getReady) {
+      ctx.drawImage(
+        sprite,
+        this.sX,
+        this.sY,
+        this.w,
+        this.h,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
+    }
+  },
+};
+var gameOver = {
+  sX: 175,
+  sY: 228,
+  w: 225,
+  h: 202,
+  x: cvs.width / 2 - 225 / 2,
+  y: 90,
+  draw: function () {
+    if (state.current == state.over) {
+      ctx.drawImage(
+        sprite,
+        this.sX,
+        this.sY,
+        this.w,
+        this.h,
+        this.x,
+        this.y,
+        this.w,
+        this.h
+      );
     }
   },
 };
@@ -256,7 +301,7 @@ var score = {
   best: parseInt(localStorage.getItem("best")) || 0,
   value: 0,
   draw: function () {
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#FFF";
     ctx.strokeStyle = "#000";
     if (state.current == state.game) {
       ctx.lineWidth = 2;
@@ -264,58 +309,11 @@ var score = {
       ctx.fillText(this.value, cvs.width / 2, 50);
       ctx.strokeText(this.value, cvs.width / 2, 50);
     } else if (state.current == state.over) {
-      ctx.lineWidth = 2;
       ctx.font = "25px IMPACT";
       ctx.fillText(this.value, 225, 186);
       ctx.strokeText(this.value, 225, 186);
       ctx.fillText(this.best, 225, 228);
       ctx.strokeText(this.best, 225, 228);
-    }
-  },
-};
-var getReady = {
-  sX: 0,
-  sY: 228,
-  w: 173,
-  h: 152,
-  x: cvs.width / 2 - 173 / 2,
-  y: 80,
-  draw: function () {
-    if (state.current == state.getReady) {
-      ctx.drawImage(
-        sprite,
-        this.sX,
-        this.sY,
-        this.w,
-        this.h,
-        this.x,
-        this.y,
-        this.w,
-        this.h
-      );
-    }
-  },
-};
-var gameOver = {
-  sX: 175,
-  sY: 228,
-  w: 225,
-  h: 202,
-  x: cvs.width / 2 - 225 / 2,
-  y: 90,
-  draw: function () {
-    if (state.current == state.over) {
-      ctx.drawImage(
-        sprite,
-        this.sX,
-        this.sY,
-        this.w,
-        this.h,
-        this.x,
-        this.y,
-        this.w,
-        this.h
-      );
     }
   },
 };
